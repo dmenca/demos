@@ -1,0 +1,57 @@
+server:
+  port: 8089
+
+spring:
+  shardingsphere:
+    datasource:
+      names: ds-0,ds-1
+      ds-0:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driverClassName: com.mysql.jdbc.Driver
+        url: jdbc:mysql://43.139.41.73:10208/ds-0?useUnicode=true&characterEncoding=utf8&tinyInt1isBit=false&useSSL=false&serverTimezone=GMT
+        username: root
+        password: 48ATEhlhHT
+      ds-1:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driverClassName: com.mysql.jdbc.Driver
+        url: jdbc:mysql://43.139.41.73:10208/ds-1?useUnicode=true&characterEncoding=utf8&tinyInt1isBit=false&useSSL=false&serverTimezone=GMT
+        username: root
+        password: 48ATEhlhHT
+    props:
+      sql:
+        show: true
+    sharding:
+      # 绑定表关系
+#      binding-tables: t_order,t_order_item
+      # 广播表设置
+      broadcast-tables: t_config
+      # SQL慢查询日志
+      tables:
+        t_order:
+          # 指定真实数据节点
+          actual-data-nodes: ds-$->{0..1}.t_order_$->{0..2}
+          # 分库策略
+          database-strategy:
+            inline:
+              # 分库分片键
+              sharding-column: order_id
+              # 分库分片算法
+              algorithm-expression: ds-$->{order_id % 2}
+          table-strategy:
+            inline:
+              #分表分片键
+              sharding-column: order_id
+              #分表算法
+              algorithm-expression: t_order_$->{order_id % 3}
+              #自增主键字段
+              key-generator:
+                column: order_id
+                # 自增主键生成算法
+                type: SNOWFLAKE
+
+mybatis-plus:
+#  typeAliasesPackage: com.dmenca.spb.entity
+  mapper-locations: classpath:mapper/*.xml
+#
+#mybatis:
+#  mapper-locations: classpath:mapper/*.xml
