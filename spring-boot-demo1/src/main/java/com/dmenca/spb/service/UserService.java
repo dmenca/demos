@@ -10,10 +10,10 @@ public interface UserService {
 
     User getUserById(Long userId);
 
-    void updateUser(User user);
+    void update(User user);
 
     UserInfoDTO getUserFullInfo(Long userId);
 
-    User createUser(CreateUserRequest createUserRequest);
+    User add(CreateUserRequest createUserRequest);
 
 }

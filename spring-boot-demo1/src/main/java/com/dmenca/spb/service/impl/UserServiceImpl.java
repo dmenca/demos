@@ -1,12 +1,14 @@
 package com.dmenca.spb.service.impl;
 
 import com.dmenca.spb.dto.CreateUserRequest;
+import com.dmenca.spb.dto.LabelObjectDTO;
 import com.dmenca.spb.dto.UserInfoDTO;
 import com.dmenca.spb.manager.UserManager;
 import com.dmenca.spb.manager.UserTagManager;
 import com.dmenca.spb.manager.UserAddressManager;
 import com.dmenca.spb.model.Address;
 import com.dmenca.spb.model.User;
+import com.dmenca.spb.service.LabelObjectService;
 import com.dmenca.spb.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,12 +26,16 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserTagManager userTagManager;
 
+    @Autowired
+    private LabelObjectService labelObjectService;
+
     public User getUserById(Long userId) {
         // 业务逻辑封装
         return userManager.getUserById(userId);
     }
 
-    public void updateUser(User user) {
+    @Override
+    public void update(User user) {
         userManager.updateUser(user);
     }
 
@@ -46,12 +52,15 @@ public class UserServiceImpl implements UserService {
         // 3. 获取用户标签信息
         List<String> tags = userTagManager.getUserTags(userId);
 
+        // 4. 获取其他service的label数据
+        List<LabelObjectDTO> labelObjectsByObjectId = labelObjectService.getLabelObjectsByObjectId(String.valueOf(userId));
+
         // 4. 组装数据
-        return new UserInfoDTO(user, addresses, tags);
+        return new UserInfoDTO(user, addresses, tags,labelObjectsByObjectId);
     }
 
     @Override
-    public User createUser(CreateUserRequest createUserRequest) {
+    public User add(CreateUserRequest createUserRequest) {
         // 1. 调用 UserManager 层创建用户
         User user = userManager.createUser(createUserRequest);
         return user;

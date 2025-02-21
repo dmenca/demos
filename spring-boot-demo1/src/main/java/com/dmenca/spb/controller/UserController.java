@@ -1,6 +1,7 @@
 package com.dmenca.spb.controller;
 
 import com.dmenca.spb.dto.CreateUserRequest;
+import com.dmenca.spb.dto.CreateUserResponse;
 import com.dmenca.spb.dto.UserInfoDTO;
 import com.dmenca.spb.model.User;
 import com.dmenca.spb.service.UserService;
@@ -20,14 +21,15 @@ public class UserController {
     }
 
     @PostMapping("")
-    public ResponseEntity<User> createUser(@RequestBody CreateUserRequest request) {
-        User user = userService.createUser(request);
-        return ResponseEntity.ok(user);
+    public ResponseEntity<CreateUserResponse> add(@RequestBody CreateUserRequest request) {
+        User user = userService.add(request);
+        CreateUserResponse createUserResponse = new CreateUserResponse();
+        return ResponseEntity.ok(createUserResponse);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateUser(@RequestBody User user) {
-        userService.updateUser(user);
+    public ResponseEntity<String> update(@RequestBody User user) {
+        userService.update(user);
         return ResponseEntity.ok("User updated");
     }
 
